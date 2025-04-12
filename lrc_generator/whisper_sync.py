@@ -11,7 +11,9 @@ from typing import Dict, List, Optional, Tuple, Union
 from rapidfuzz import fuzz, process
 import warnings
 from pydub import AudioSegment
+import emoji
 
+# Warning filters are set globally in __init__.py
 
 class WhisperLyricsSync:
     """
@@ -77,10 +79,10 @@ class WhisperLyricsSync:
                 "verbose": None
             }
 
-            # 使用模型的默认设备设置
+            # Use the model's default device settings
             result = self.model.transcribe(audio_path_to_use, **options)
 
-            # 保存转录结果到文件
+            # Save transcription results to file
             output_dir = os.path.dirname(audio_path)
             transcription_path = os.path.join(output_dir, "whisper_transcription.txt")
             
@@ -166,29 +168,29 @@ class WhisperLyricsSync:
 
         best_score = 0
         best_timestamp = None
-        window_size = 3  # 考虑相邻的几个段落
+        window_size = 3  # Consider adjacent paragraphs
 
-        # 遍历每个可能的起始点
+        # Iterate through each possible starting point
         for i in range(len(words_with_times)):
-            # 获取一个时间窗口内的文本
+            # Get text within a time window
             window_end = min(i + window_size, len(words_with_times))
             window_text = " ".join([text for text, _ in words_with_times[i:window_end]])
             window_text = self.clean_text(window_text)
 
-            # 计算相似度分数
+            # Calculate similarity score
             score = fuzz.token_sort_ratio(cleaned_line, window_text)
 
-            # 如果找到更好的匹配
+            # If we found a better match
             if score > best_score and score >= threshold:
                 best_score = score
-                # 使用窗口中第一个段落的时间戳
+                # Use the timestamp of the first paragraph in the window
                 best_timestamp = words_with_times[i][1]
 
-                # 如果分数非常高，可以提前结束搜索
+                # If the score is very high, we can end the search early
                 if score >= 95:
                     break
 
-        # 如果没有找到好的匹配
+        # If no good match was found
         if best_timestamp is None:
             return None, 0
 
@@ -196,20 +198,20 @@ class WhisperLyricsSync:
 
     def count_exact_word_matches(self, text1: str, text2: str) -> Tuple[int, int]:
         """
-        计算两段文本之间精确匹配的词数
+        Count the number of exact word matches between two texts
 
         Args:
-            text1: 第一段文本
-            text2: 第二段文本
+            text1: First text
+            text2: Second text
 
         Returns:
-            Tuple[匹配的词数, 总词数]
+            Tuple[matched_words_count, total_words_count]
         """
-        # 清理并分词
+        # Clean and tokenize
         words1 = set(self.clean_text(text1).split())
         words2 = set(self.clean_text(text2).split())
         
-        # 计算匹配词数
+        # Calculate matched words
         matched_words = len(words1.intersection(words2))
         total_words = len(words1)
         
@@ -217,12 +219,12 @@ class WhisperLyricsSync:
 
     def align_segments_to_lyrics(self, transcription: Dict, lyrics: List[str]) -> List[Tuple[str, float, float]]:
         """
-        将转录文本段落与歌词行对齐，并分配时间戳。
-        以歌词文本为基准，重新格式化转录段落。
+        Align transcription segments with lyrics lines and assign timestamps.
+        Reformat transcription segments based on lyrics text.
 
         Args:
-            transcription: Whisper 转录结果
-            lyrics: 歌词行列表（按时间顺序排列，包含重复段落）
+            transcription: Whisper transcription result
+            lyrics: List of lyrics lines (in time order, including repeated sections)
 
         Returns:
             List of (lyrics_line, timestamp, confidence) tuples
@@ -234,7 +236,7 @@ class WhisperLyricsSync:
         if not segments:
             return [(line, i * 3.0, 0) for i, line in enumerate(lyrics)]
 
-        # 第一步：收集所有词级别的时间戳信息
+        # Step 1: Collect all word-level timestamp information
         all_words = []  # [(word, start_time, end_time)]
         for segment in segments:
             if 'words' in segment:
@@ -247,13 +249,13 @@ class WhisperLyricsSync:
                             'end': word_info.get('end', segment['end'])
                         })
 
-        # 第二步：按顺序为每行歌词找到匹配的词序列
-        reformatted_segments = []  # [(lyrics_line, start_time, end_time, words_info)]
+        # Step 2: Find matching word sequences for each lyrics line in order
+        reformatted_segments = []  # [(lyrics_line, start_time, end_time, words_info, best_match_ratio)]
         current_word_index = 0
         
-        # 将所有调试信息写入同一个文件操作中
+        # Write all debug information in a single file operation
         with open(debug_file, 'w', encoding='utf-8') as f:
-            # 写入原始segments信息
+            # Write original segments information
             f.write("=== Original Segments Information ===\n\n")
             f.write(f"Total segments: {len(segments)}\n\n")
             for i, segment in enumerate(segments):
@@ -267,22 +269,22 @@ class WhisperLyricsSync:
                         f.write(f"    - {word.get('word', '')}: {word.get('start', 0):.2f} - {word.get('end', 0):.2f}\n")
                 f.write("\n")
 
-            # 写入所有词的信息
+            # Write all words information
             f.write("\n=== All Words ===\n\n")
             f.write(f"Total words: {len(all_words)}\n")
             for word in all_words:
                 f.write(f"Word: {word['word']}, Start: {word['start']:.2f}, End: {word['end']:.2f}\n")
             f.write("\n")
 
-            # 写入匹配过程
+            # Write matching process
             f.write("\n=== Matching Process ===\n\n")
             
             for lyrics_index, lyrics_line in enumerate(lyrics):
                 lyrics_words = self.clean_text(lyrics_line).split()
-                window_size = len(lyrics_words)  # 使用歌词行的词数作为窗口大小
+                window_size = len(lyrics_words)  # Use the number of words in the lyrics line as window size
                 best_window = None
                 best_match_ratio = 0
-                search_range = min(50, len(all_words) - current_word_index)  # 限制向前搜索的范围
+                search_range = min(50, len(all_words) - current_word_index)  # Limit forward search range
                 
                 f.write(f"Processing line {lyrics_index}: {lyrics_line}\n")
                 f.write(f"Words in line: {lyrics_words}\n")
@@ -290,17 +292,17 @@ class WhisperLyricsSync:
                 f.write(f"Search range: {search_range}\n")
                 f.write(f"Window size: {window_size}\n\n")
                 
-                # 在一定范围内寻找最佳匹配窗口
+                # Search for the best matching window within a range
                 match_indx = 0
                 for start_idx in range(current_word_index, current_word_index + search_range):
                     if start_idx + window_size > len(all_words):
                         break
                         
-                    # 获取当前窗口的词
+                    # Get words in the current window
                     window_words = all_words[start_idx:start_idx + window_size]
                     window_text = " ".join(w['word'] for w in window_words)
                     
-                    # 计算精确匹配率
+                    # Calculate exact match ratio
                     lyrics_set = set(lyrics_words)
                     window_set = set(window_text.split())
                     matched_words = len(lyrics_set.intersection(window_set))
@@ -310,20 +312,20 @@ class WhisperLyricsSync:
                     f.write(f"    Window text: {window_text}\n")
                     f.write(f"    Match ratio: {match_ratio:.2f}\n\n")
                     
-                    # 如果找到更好的匹配
+                    # If we found a better match
                     if match_ratio > best_match_ratio:
                         best_match_ratio = match_ratio
                         best_window = window_words
                         match_indx = start_idx
                         
-                        # 如果匹配率非常高，提前结束搜索
-                        if match_ratio >= 0.90:  # 90%的词精确匹配
+                        # If match ratio is very high, end search early
+                        if match_ratio >= 0.90:  # 90% exact word match
                             break
                 
-                # 记录匹配结果
+                # Record matching results
                 f.write(f"Final match for line {lyrics_index}:\n")
                 
-                if best_window and best_match_ratio >= 0.5:  # 至少要有50%的词匹配
+                if best_window and best_match_ratio >= 0.5:  # At least 50% word match required
                     start_time = best_window[0]['start']
                     end_time = best_window[-1]['end']
                     f.write(f"  Matched from {start_time:.2f} to {end_time:.2f} (match ratio: {best_match_ratio:.2f})\n")
@@ -335,52 +337,52 @@ class WhisperLyricsSync:
                         lyrics_line,
                         start_time,
                         end_time,
-                        best_window
+                        best_window,
+                        best_match_ratio
                     ))
                     
-                    # 更新搜索起点
+                    # Update search starting point
                     if best_match_ratio >= 0.90:
-                        # 对于高质量匹配，直接移动到窗口末尾
+                        # For high quality matches, move directly to the end of the window
                         current_word_index = start_idx + window_size
                     else:
-                        # 对于较低质量匹配，移动到窗口末尾但允许小幅回溯
-                        backtrack = min(3, int(window_size * 0.2))  # 最多回溯3个词或窗口大小的20%
+                        # For lower quality matches, move to the end of the window but allow small backtracking
+                        backtrack = min(3, int(window_size * 0.2))  # Backtrack at most 3 words or 20% of window size
                         current_word_index = match_indx + window_size - backtrack
                     
                     f.write(f"Updated current_word_index to: {current_word_index}\n")
                 else:
-                    f.write("  No good match found\n")
-                    # 如果没有找到匹配，使用估计的时间点
+                    f.write("No good match found\n")
+                    # If no match found, use estimated time point
                     # total_duration = segments[-1]["end"]
                     # estimated_time = (lyrics_index / len(lyrics)) * total_duration
                     if len(reformatted_segments) > 0:
                         reformatted_segments.append((
                             lyrics_line,
                             reformatted_segments[-1][2] + 0.1,
-                            reformatted_segments[-1][2] + 2.0,  # 估计持续2秒
-                            []
+                            reformatted_segments[-1][2] + 2.0,  # Estimated 2 seconds duration
+                            [],
+                            best_match_ratio
                         ))
                     else:
                         reformatted_segments.append((
                             lyrics_line,
                             0.0,
-                            2.0,  # 估计持续2秒
-                            []
+                            2.0,  # Estimated 2 seconds duration
+                            [],
+                            best_match_ratio
                         ))
                 f.write("\n")
         
-        # 第三步：确保时间戳单调递增
+        # Step 3: Ensure timestamps are monotonically increasing
         prev_end_time = 0
-        for i, (line, start_time, end_time, words) in enumerate(reformatted_segments):
-            # 确保时间戳至少间隔0.1秒
+        for i, (line, start_time, end_time, words, best_match_ratio) in enumerate(reformatted_segments):
+            # Ensure timestamps are at least 0.1 seconds apart
             adjusted_start = max(start_time, prev_end_time + 0.1)
-            adjusted_end = max(end_time, adjusted_start + 0.5)  # 确保每行至少持续0.5秒
+            adjusted_end = max(end_time, adjusted_start + 0.5)  # Ensure each line lasts at least 0.5 seconds
             prev_end_time = adjusted_end
             
-            # 计算置信度（基于匹配到的词数）
-            confidence = len(words) / len(self.clean_text(line).split()) * 100 if words else 0
-            
-            aligned_lyrics.append((line, adjusted_start, confidence))
+            aligned_lyrics.append((line, adjusted_start, best_match_ratio))
         
         return aligned_lyrics
 
@@ -391,20 +393,20 @@ class WhisperLyricsSync:
             min_confidence: int = 60
     ) -> List[Tuple[str, float, float]]:
         """
-        将歌词与音频对齐
+        Align lyrics with audio
 
         Args:
-            audio_path: 音频文件路径
-            lyrics: 歌词行列表
-            min_confidence: 最小置信度（此参数保留但不再使用）
+            audio_path: Path to audio file
+            lyrics: List of lyrics lines
+            min_confidence: Minimum confidence threshold (parameter kept but no longer used)
 
         Returns:
             List of (lyrics_line, timestamp, confidence) tuples
         """
-        # 转录音频
+        # Transcribe audio
         transcription = self.transcribe_audio(audio_path)
         
-        # 直接按顺序对齐
+        # Align in sequence
         return self.align_segments_to_lyrics(transcription, lyrics)
 
     def generate_lrc(
@@ -427,74 +429,97 @@ class WhisperLyricsSync:
         Returns:
             Path to generated LRC file
         """
-        # Load lyrics with UTF-8 encoding
+        # # Load lyrics with UTF-8 encoding
+        # with open(lyrics_path, 'r', encoding='utf-8') as f:
+        #     lyrics_text = f.read()
+    # Read the input file
         with open(lyrics_path, 'r', encoding='utf-8') as f:
-            lyrics_text = f.read()
+            lines = f.readlines()
 
-        # Process lyrics (remove empty lines, etc.)
-        lyrics = [line.strip() for line in lyrics_text.strip().split('\n') if line.strip()]
+        # Process each line
+        lyrics = []
+        for line in lines:
+            # Remove content inside square brackets and parentheses, including the brackets
+            line = re.sub(r'\[.*?\]|\(.*?\)', '', line)
+
+            if line.strip():
+                # Remove emojis dynamically using the emoji library
+                line = emoji.replace_emoji(line, replace='')
+            
+                # Strip leading/trailing whitespace
+                line = line.strip()
+            
+                # Add the line even if it's empty after cleaning
+                lyrics.append(line)
+
 
         # Align lyrics
         print("Aligning lyrics using Whisper speech recognition...")
         aligned_lyrics = self.align_lyrics(audio_path, lyrics)
+        # Calculate the mean value of the best_match_ratio
+        mean_match_ratio = sum(t[2] for t in aligned_lyrics) / len(aligned_lyrics)
+        print(f"ℹ️ Mean Match Ratio: {mean_match_ratio:.2f}")
+        if mean_match_ratio > 0.5:
+            # Calculate audio duration (for metadata)
+            audio = AudioSegment.from_file(audio_path)
+            duration_seconds = len(audio) / 1000.0
 
-        # Calculate audio duration (for metadata)
-        audio = AudioSegment.from_file(audio_path)
-        duration_seconds = len(audio) / 1000.0
+            # Always use lyrics filename as output filename
+            lyrics_dir = os.path.dirname(lyrics_path)
+            lyrics_filename = os.path.splitext(os.path.basename(lyrics_path))[0]
+            output_path = os.path.join(lyrics_dir, f"{lyrics_filename}.lrc")
+            print(f"Will generate LRC file at: {output_path}")
 
-        # 总是使用歌词文件名作为输出文件名
-        lyrics_dir = os.path.dirname(lyrics_path)
-        lyrics_filename = os.path.splitext(os.path.basename(lyrics_path))[0]
-        output_path = os.path.join(lyrics_dir, f"{lyrics_filename}.lrc")
-        print(f"Will generate LRC file at: {output_path}")
+            # Write LRC file with UTF-8-BOM encoding
+            with open(output_path, 'wb') as f:
+                # Write BOM
+                f.write(b'\xef\xbb\xbf')
+                
+                # Prepare all content
+                content = []
+                
+                # Write metadata
+                if metadata:
+                    if 'title' in metadata:
+                        content.append(f"[ti:{self._normalize_text(metadata['title'])}]")
+                    if 'artist' in metadata:
+                        content.append(f"[ar:{self._normalize_text(metadata['artist'])}]")
+                    if 'album' in metadata:
+                        content.append(f"[al:{self._normalize_text(metadata['album'])}]")
 
-        # Write LRC file with UTF-8-BOM encoding
-        with open(output_path, 'wb') as f:
-            # Write BOM
-            f.write(b'\xef\xbb\xbf')
-            
-            # 准备所有内容
-            content = []
-            
-            # Write metadata
-            if metadata:
-                if 'title' in metadata:
-                    content.append(f"[ti:{self._normalize_text(metadata['title'])}]")
-                if 'artist' in metadata:
-                    content.append(f"[ar:{self._normalize_text(metadata['artist'])}]")
-                if 'album' in metadata:
-                    content.append(f"[al:{self._normalize_text(metadata['album'])}]")
+                # Write length metadata
+                minutes = int(duration_seconds // 60)
+                seconds = int(duration_seconds % 60)
+                content.append(f"[length:{minutes:02d}:{seconds:02d}]")
+                content.append("")  # Empty line
 
-            # Write length metadata
-            minutes = int(duration_seconds // 60)
-            seconds = int(duration_seconds % 60)
-            content.append(f"[length:{minutes:02d}:{seconds:02d}]")
-            content.append("")  # 空行
+                # Write timestamped lyrics
+                for line, timestamp, confidence in aligned_lyrics:
+                    minutes = int(timestamp // 60)
+                    seconds = timestamp % 60
+                    normalized_line = self._normalize_text(line)
+                    # Even if the line is empty, still write the timestamp
+                    content.append(f"[{minutes:02d}:{seconds:05.2f}]{normalized_line}")
 
-            # Write timestamped lyrics
-            for line, timestamp, confidence in aligned_lyrics:
-                minutes = int(timestamp // 60)
-                seconds = timestamp % 60
-                normalized_line = self._normalize_text(line)
-                content.append(f"[{minutes:02d}:{seconds:05.2f}]{normalized_line}")
+                # Write all content to file
+                f.write('\n'.join(content).encode('utf-8'))
 
-            # 将所有内容写入文件
-            f.write('\n'.join(content).encode('utf-8'))
-
-        print(f"Whisper-synced LRC file generated at: {output_path}")
+            print(f"✅ Whisper-synced LRC file generated at: {output_path}")
+        else:
+            print("💔 Whisper sync failed due to low match ratio.")
         return output_path
 
     def _normalize_text(self, text: str) -> str:
         """
-        规范化文本，替换特殊字符
+        Normalize text by replacing special characters
         
         Args:
-            text: 输入文本
+            text: Input text
             
         Returns:
-            规范化后的文本
+            Normalized text
         """
-        # 替换各种引号为标准引号
+        # Replace various quotes with standard quotes
         replacements = {
             ''': "'",
             ''': "'",

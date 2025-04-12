@@ -1,10 +1,11 @@
 """
 Utility functions for the LRC generator
+(Including core functionality previously in core.py)
 """
 
 import os
 import re
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 
 def extract_metadata_from_filename(filename: str) -> Dict[str, str]:
@@ -104,3 +105,46 @@ def ensure_directory_exists(file_path: str) -> None:
     directory = os.path.dirname(file_path)
     if directory and not os.path.exists(directory):
         os.makedirs(directory)
+
+
+# Functions moved from core.py
+
+def validate_audio_file(file_path: str) -> bool:
+    """
+    Validate that the audio file exists and has a supported extension.
+
+    Args:
+        file_path: Path to the audio file
+
+    Returns:
+        True if the file is valid, False otherwise
+    """
+    if not os.path.isfile(file_path):
+        return False
+
+    # Check file extension
+    supported_extensions = ['.mp3', '.wav', '.flac', '.ogg', '.m4a']
+    _, ext = os.path.splitext(file_path)
+    return ext.lower() in supported_extensions
+
+
+def validate_lyrics_file(file_path: str) -> bool:
+    """
+    Validate that the lyrics file exists and is not empty.
+
+    Args:
+        file_path: Path to the lyrics file
+
+    Returns:
+        True if the file is valid, False otherwise
+    """
+    if not os.path.isfile(file_path):
+        return False
+
+    # Check if file is not empty
+    try:
+        with open(file_path, 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+            return len(content) > 0
+    except Exception:
+        return False
