@@ -448,9 +448,10 @@ class WhisperLyricsSync:
             
                 # Strip leading/trailing whitespace
                 line = line.strip()
-            
-                # Add the line even if it's empty after cleaning
-                lyrics.append(line)
+
+                # Add the line only if it's not empty after cleaning
+                if line:
+                    lyrics.append(line)
 
 
         # Align lyrics

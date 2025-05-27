@@ -38,6 +38,14 @@ An automatic lyrics timing generator based on OpenAI Whisper. This tool automati
 
 3. Install dependencies in venv
    ```bash
+   python -m venv venv
+   # Windows:
+   venv\Scripts\activate
+   # MacOS/Linux:
+   source venv/bin/activate
+   ```
+   
+   ```bash
    pip install -r requirements.txt
    ```
 
