@@ -1,172 +1,141 @@
-# LRC Generator
+# LRC Word Transcriber (Formerly LRC Generator)
 
-An automatic lyrics timing generator based on OpenAI Whisper. This tool automatically aligns lyrics with audio files to generate timestamped LRC files.
+This tool transcribes audio files directly into word-level timestamped LRC files using OpenAI Whisper. Each word recognized in the audio is output on a new line in the LRC file with its corresponding start time.
 
 ## Features
 
-- Supports multiple audio formats (MP3, WAV, etc.)
-- Uses Whisper for accurate speech recognition
-- Automatic lyrics-to-audio alignment with word-level matching
-- Generates standard LRC format files
-- Supports special characters in lyrics
-- Handles repeated lyrics sections
-- Provides detailed debugging information
-- Filters out common warnings for cleaner output
+- Supports multiple audio formats (MP3, WAV, M4A, FLAC, etc.) via FFmpeg.
+- Uses OpenAI Whisper for accurate speech-to-text transcription with word-level timestamps.
+- Generates standard LRC format files where each line is a single word with its timestamp.
+- Allows specifying Whisper model size for a balance between speed and accuracy.
+- Optionally accepts metadata (title, artist, album) for the LRC file.
+- Filters out common console warnings for cleaner output.
+- Generates a detailed transcription log (`*_transcription_log.txt`) for review.
 
 ## Requirements
 
 - Python 3.8 or higher
-- FFmpeg (for audio processing)
-- PyTorch (for Whisper model)
+- FFmpeg (must be installed and accessible in your system's PATH for audio processing)
+- PyTorch (Whisper model dependency)
 
 ## Installation
 
-1. Install FFmpeg (if not already installed):
-   ```bash
-   # macOS
-   brew install ffmpeg
+1.  **Install FFmpeg**
+    If not already installed, download from [ffmpeg.org](https://ffmpeg.org/download.html) and add it to your system's PATH, or install via a package manager:
+    ```bash
+    # macOS (using Homebrew)
+    brew install ffmpeg
 
-   # Ubuntu/Debian
-   sudo apt-get install ffmpeg
-   ```
+    # Ubuntu/Debian
+    sudo apt update && sudo apt install ffmpeg
+    ```
 
-2. Clone the repository:
-   ```bash
-   git clone [repository-url]
-   cd LRC-Generator
-   ```
+2.  **Clone the Repository**
+    ```bash
+    git clone [repository-url] # Replace [repository-url] with the actual URL
+    cd LRC-Word-Transcriber # Or your repository's directory name
+    ```
 
-3. Install dependencies in venv
-   ```bash
-   python -m venv venv
-   # Windows:
-   venv\Scripts\activate
-   # MacOS/Linux:
-   source venv/bin/activate
-   ```
-   
-   ```bash
-   pip install -r requirements.txt
-   ```
+3.  **Set up a Python Virtual Environment (Recommended)**
+    ```bash
+    python -m venv venv
+    # Windows:
+    venv\Scripts\activate
+    # macOS/Linux:
+    source venv/bin/activate
+    ```
+
+4.  **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ```
+    The first time you run the tool with a specific Whisper model, the model will be downloaded automatically. This requires an internet connection.
 
 ## Usage
 
-Basic usage:
-```bash
-lrc-gen generate --audio "./songs/my_song.mp3" --lyrics "./lyrics/my_lyrics.txt"
-```
+The command-line tool is named `lrc-gen` (though a rename to `lrc-transcribe` or similar might be more fitting for the new functionality).
 
-if sync failed due to low match ratio, feel free to use the clean_lyrics only for manual operation.
-```bash
-python clean_lyrics.py --input "./musicians/Arion/Caught in the Moment.txt" --output "./musicians/Arion/Caught in the Moment.txt"
-```
-
-### Advanced Options
+**Basic Usage:**
 
 ```bash
-lrc-gen generate --audio "path/to/audio" --lyrics "path/to/lyrics" --whisper-model base --title "Song Title" --artist "Artist Name" --album "Album Name"
+lrc-gen generate --audio "./path/to/your/song.mp3"
+```
+This will create an LRC file named `song.lrc` in the same directory as `song.mp3`.
+
+**Specifying Output Path and Metadata:**
+
+```bash
+lrc-gen generate --audio "./audio/my_track.wav" \
+                 --output "./lrc_files/my_track_lyrics.lrc" \
+                 --title "My Awesome Track" \
+                 --artist "The Transcribers" \
+                 --album "Whispers in Time" \
+                 --whisper-model small
 ```
 
-Available Whisper models:
-- `tiny`: Fastest, least accurate
-- `base`: Good balance of speed and accuracy (default)
-- `small`: Better accuracy, slower
-- `medium`: High accuracy, slower
-- `large`: Highest accuracy, slowest
+**Available Whisper Models:**
 
-### Handling Filenames with Spaces or Special Characters
+The `--whisper-model` option allows you to choose the size of the Whisper model. Smaller models are faster but less accurate; larger models are more accurate but significantly slower and require more VRAM/RAM.
 
-If your filenames contain spaces or special characters, you can:
+-   `tiny`
+-   `base` (default)
+-   `small`
+-   `medium`
+-   `large` (and its variants like `large-v1`, `large-v2`, `large-v3`)
 
-1. Use quotes:
-   ```bash
-   lrc-gen generate --audio "./songs/my song.mp3" --lyrics "./lyrics/my lyrics.txt"
-   ```
+Refer to OpenAI Whisper documentation for details on model differences.
 
-2. Use backslash escaping:
-   ```bash
-   lrc-gen generate --audio ./songs/my\ song.mp3 --lyrics ./lyrics/my\ lyrics.txt
-   ```
+**Handling Filenames with Spaces or Special Characters:**
 
-## File Format Requirements
-
-### Audio Files
-- Supported formats: MP3, WAV, M4A, FLAC, etc.
-- High-quality audio recommended for better recognition
-
-### Lyrics Files
-- Plain text file (.txt)
-- UTF-8 encoding
-- One line per lyric
-- No timestamps
-- Arranged in singing order
-
-Example lyrics file format:
-```text
-verse 1
-First line of lyrics
-Second line of lyrics
-chorus
-This is the chorus
-Second line of chorus
+If your audio filename contains spaces or special characters, enclose the path in quotes:
+```bash
+lrc-gen generate --audio "./my songs/amazing song with spaces.mp3"
 ```
+
+## Input File Requirements
+
+-   **Audio Files:**
+    -   Supported formats include MP3, WAV, M4A, FLAC, and others supported by FFmpeg.
+    -   Higher quality audio generally leads to better transcription accuracy.
 
 ## Output Files
 
-- Generated LRC file will have the same name as the lyrics file (different extension)
-- Location: Same directory as the lyrics file
-- Format: Standard LRC format, UTF-8 encoding (with BOM)
+1.  **LRC File (`.lrc`)**:
+    -   The primary output, containing word-level timestamps.
+    -   Location: Specified by `--output`, or defaults to the same directory and basename as the input audio file, with an `.lrc` extension.
+    -   Format: Standard LRC format, UTF-8 encoding (with BOM).
+    -   Each line in the LRC file will be a single word recognized by Whisper, prefixed by its start timestamp.
+        Example:
+        ```lrc
+        [ti:My Transcribed Song]
+        [ar:Whisper]
+        [length:00:25]
 
-Example output:
-```text
-[ti:Song Title]
-[ar:Artist]
-[al:Album]
-[length:03:45]
+        [00:00.50]This
+        [00:00.80]is
+        [00:01.10]an
+        [00:01.50]example
+        [00:02.00]transcription.
+        ```
 
-[00:01.23]First line of lyrics
-[00:05.67]Second line of lyrics
-[00:10.89]This is the chorus
-```
+2.  **Transcription Log File (`*_transcription_log.txt`)**:
+    -   A text file saved in the same directory as the input audio, with the original audio filename plus `_transcription_log.txt`.
+    -   Contains the full output from the Whisper model, including all recognized segments, words within those segments, their start/end times, and (if available) recognition probabilities.
+    -   This log is useful for understanding the raw transcription quality and for debugging if the LRC output seems incorrect.
 
 ## How It Works
 
-The LRC Generator uses a sophisticated matching algorithm:
-
-1. **Transcription**: Uses OpenAI's Whisper model to transcribe the audio with word-level timestamps
-2. **Word Matching**: Aligns lyrics lines with transcribed words using a sliding window approach
-3. **Timestamp Assignment**: Assigns timestamps to each lyrics line based on the best matches
-4. **Confidence Calculation**: Calculates match ratio to ensure quality results
-
-The matching process prioritizes:
-- Maintaining the original order of lyrics
-- Finding exact word matches between lyrics and transcription
-- Ensuring timestamps are monotonically increasing
-
-## Debug Information
-
-The program generates two debug files:
-1. `whisper_transcription.txt`: Contains Whisper's speech recognition results
-2. `debug_segments.txt`: Contains detailed matching process information including:
-   - Original transcription segments
-   - Word-level timestamp information
-   - Matching process for each lyrics line
-   - Match ratios and selected timestamps
-
-These files are invaluable for troubleshooting if the synchronization isn't perfect.
+1.  **Audio Loading & Conversion**: The input audio file is loaded. If it's not in WAV format, it's temporarily converted to WAV using FFmpeg (via `pydub`).
+2.  **Whisper Transcription**: The audio is fed into the selected OpenAI Whisper model, which performs speech-to-text transcription and provides word-level timestamps for each recognized word.
+3.  **LRC File Generation**: The list of recognized words and their start timestamps are formatted into the standard LRC file format. Metadata (title, artist, album, length) is also included.
 
 ## Important Notes
 
-1. First run will download the Whisper model, requiring internet connection
-2. Processing time depends on audio length and chosen model size:
-   - `tiny` and `base` models work well for most cases
-   - Larger models (`medium`, `large`) provide better accuracy but are significantly slower
-3. High-quality audio files recommended for better recognition
-4. If lyrics matching is not ideal:
-   - Check lyrics text accuracy
-   - Ensure correct lyrics order
-   - Review debug files for detailed matching process
-5. The tool automatically filters common warnings (like OpenMP and FP16 warnings)
+1.  **First Run & Model Download**: The first time you use a specific Whisper model size, it will be downloaded. This requires an internet connection and might take some time depending on the model size and your connection speed.
+2.  **Processing Time**: Transcription time depends on the audio length, the chosen Whisper model size, and your hardware (CPU/GPU).
+3.  **Transcription Accuracy**: The accuracy of the generated LRC file directly depends on the Whisper model's transcription accuracy for the given audio. Clear audio with minimal noise and clear speech/singing will yield better results.
+4.  **Resource Usage**: Larger Whisper models require more RAM and, if a GPU is used, more VRAM.
+5.  **FFmpeg Dependency**: Ensure FFmpeg is installed and accessible in your system's PATH. The tool relies on it for broad audio format support.
 
 ## License
 

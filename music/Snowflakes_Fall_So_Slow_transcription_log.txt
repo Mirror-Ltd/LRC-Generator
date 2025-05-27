@@ -1,0 +1,185 @@
+=== Whisper Full Transcription Log ===
+
+Audio File: .\music\Snowflakes_Fall_So_Slow.mp3
+Whisper Model: base
+
+--- Segments ---
+Segment 0 [2.04s - 3.44s]:  Shhh.
+  Words:
+    - ' Shhh.' (2.04s - 3.44s, prob: 0.30)
+Segment 1 [5.00s - 8.28s]:  The snow is falling. Time for sleep.
+  Words:
+    - ' The' (4.98s - 5.68s, prob: 0.54)
+    - ' snow' (5.68s - 5.92s, prob: 0.99)
+    - ' is' (5.92s - 6.12s, prob: 0.99)
+    - ' falling.' (6.12s - 6.46s, prob: 1.00)
+    - ' Time' (7.28s - 7.68s, prob: 0.99)
+    - ' for' (7.68s - 7.90s, prob: 0.99)
+    - ' sleep.' (7.90s - 8.28s, prob: 0.99)
+Segment 2 [16.58s - 21.00s]:  Snow flakes fall so slow and white.
+  Words:
+    - ' Snow' (16.58s - 17.98s, prob: 0.37)
+    - ' flakes' (17.98s - 18.80s, prob: 0.31)
+    - ' fall' (18.80s - 19.52s, prob: 0.49)
+    - ' so' (19.52s - 19.80s, prob: 0.98)
+    - ' slow' (19.80s - 20.30s, prob: 0.99)
+    - ' and' (20.30s - 20.78s, prob: 0.89)
+    - ' white.' (20.78s - 21.48s, prob: 0.57)
+Segment 3 [21.84s - 25.44s]:  Blankets often fire light.
+  Words:
+    - ' Blankets' (21.84s - 23.06s, prob: 0.82)
+    - ' often' (23.06s - 23.82s, prob: 0.88)
+    - ' fire' (23.82s - 24.60s, prob: 0.98)
+    - ' light.' (24.60s - 25.44s, prob: 0.84)
+Segment 4 [26.44s - 29.96s]:  Outside winter winds may sigh,
+  Words:
+    - ' Outside' (26.40s - 27.04s, prob: 0.58)
+    - ' winter' (27.04s - 28.22s, prob: 0.76)
+    - ' winds' (28.22s - 29.12s, prob: 0.74)
+    - ' may' (29.12s - 29.42s, prob: 0.90)
+    - ' sigh,' (29.42s - 29.96s, prob: 0.54)
+Segment 5 [30.36s - 36.06s]:  But hear your safe and warm, my child.
+  Words:
+    - ' But' (30.36s - 30.70s, prob: 0.30)
+    - ' hear' (30.70s - 31.14s, prob: 0.77)
+    - ' your' (31.14s - 31.58s, prob: 0.91)
+    - ' safe' (31.58s - 32.22s, prob: 0.37)
+    - ' and' (32.22s - 32.80s, prob: 0.98)
+    - ' warm,' (32.80s - 33.42s, prob: 0.93)
+    - ' my' (34.72s - 35.02s, prob: 0.46)
+    - ' child.' (35.02s - 36.06s, prob: 0.98)
+Segment 6 [39.04s - 43.24s]:  Tied beneath the quilt so deep,
+  Words:
+    - ' Tied' (39.04s - 40.32s, prob: 0.43)
+    - ' beneath' (40.32s - 40.82s, prob: 1.00)
+    - ' the' (40.82s - 41.46s, prob: 0.97)
+    - ' quilt' (41.46s - 42.00s, prob: 0.58)
+    - ' so' (42.00s - 42.48s, prob: 0.43)
+    - ' deep,' (42.48s - 43.24s, prob: 1.00)
+Segment 7 [44.04s - 47.66s]:  Dreams will come and softly sweep.
+  Words:
+    - ' Dreams' (44.04s - 44.62s, prob: 0.86)
+    - ' will' (44.62s - 44.84s, prob: 0.99)
+    - ' come' (44.84s - 45.34s, prob: 0.94)
+    - ' and' (45.34s - 45.86s, prob: 0.90)
+    - ' softly' (45.86s - 46.60s, prob: 0.96)
+    - ' sweep.' (46.60s - 47.66s, prob: 0.98)
+Segment 8 [48.24s - 51.86s]:  Candles flicker stars arise,
+  Words:
+    - ' Candles' (48.24s - 48.96s, prob: 0.71)
+    - ' flicker' (48.96s - 50.00s, prob: 0.89)
+    - ' stars' (50.00s - 50.74s, prob: 0.60)
+    - ' arise,' (50.74s - 51.86s, prob: 0.72)
+Segment 9 [51.86s - 58.38s]:  Snow flakes dance in moon with skies.
+  Words:
+    - ' Snow' (51.86s - 52.88s, prob: 0.66)
+    - ' flakes' (52.88s - 53.46s, prob: 0.18)
+    - ' dance' (53.46s - 54.14s, prob: 0.15)
+    - ' in' (54.14s - 54.62s, prob: 0.95)
+    - ' moon' (54.62s - 56.04s, prob: 0.33)
+    - ' with' (56.04s - 56.74s, prob: 0.55)
+    - ' skies.' (56.74s - 58.38s, prob: 0.98)
+Segment 10 [65.34s - 69.12s]:  Drift away the night is near.
+  Words:
+    - ' Drift' (65.34s - 66.50s, prob: 0.87)
+    - ' away' (66.50s - 67.04s, prob: 0.99)
+    - ' the' (67.04s - 67.76s, prob: 0.68)
+    - ' night' (67.76s - 68.22s, prob: 0.94)
+    - ' is' (68.22s - 68.78s, prob: 0.82)
+    - ' near.' (68.78s - 69.12s, prob: 0.81)
+Segment 11 [70.00s - 73.76s]:  Close your eyes no need for fear.
+  Words:
+    - ' Close' (70.00s - 70.32s, prob: 0.90)
+    - ' your' (70.32s - 71.10s, prob: 0.99)
+    - ' eyes' (71.10s - 71.56s, prob: 1.00)
+    - ' no' (71.56s - 72.04s, prob: 0.61)
+    - ' need' (72.04s - 72.62s, prob: 1.00)
+    - ' for' (72.62s - 73.18s, prob: 0.99)
+    - ' fear.' (73.18s - 73.76s, prob: 1.00)
+Segment 12 [74.52s - 78.24s]:  Mama's song will keep you tight
+  Words:
+    - ' Mama's' (74.52s - 75.60s, prob: 0.63)
+    - ' song' (75.60s - 75.88s, prob: 0.65)
+    - ' will' (75.88s - 76.36s, prob: 0.98)
+    - ' keep' (76.36s - 76.80s, prob: 1.00)
+    - ' you' (76.80s - 77.48s, prob: 1.00)
+    - ' tight' (77.48s - 78.24s, prob: 0.71)
+Segment 13 [78.24s - 84.78s]:  Through the hush of snowy night.
+  Words:
+    - ' Through' (78.24s - 79.12s, prob: 0.69)
+    - ' the' (79.12s - 79.84s, prob: 0.99)
+    - ' hush' (79.84s - 80.36s, prob: 0.75)
+    - ' of' (80.36s - 80.96s, prob: 0.99)
+    - ' snowy' (80.96s - 83.00s, prob: 0.96)
+    - ' night.' (83.00s - 84.78s, prob: 0.93)
+Segment 14 [87.54s - 91.34s]:  Bicycles on windowpains
+  Words:
+    - ' Bicycles' (87.54s - 88.94s, prob: 0.86)
+    - ' on' (88.94s - 89.62s, prob: 0.97)
+    - ' windowpains' (89.62s - 91.34s, prob: 0.71)
+Segment 15 [91.34s - 95.62s]:  Draw soft pictures with their veins.
+  Words:
+    - ' Draw' (91.34s - 92.12s, prob: 0.40)
+    - ' soft' (92.12s - 92.88s, prob: 0.98)
+    - ' pictures' (92.88s - 93.52s, prob: 0.95)
+    - ' with' (93.52s - 94.26s, prob: 0.97)
+    - ' their' (94.26s - 94.76s, prob: 0.96)
+    - ' veins.' (94.76s - 95.62s, prob: 0.94)
+Segment 16 [96.40s - 100.06s]:  Whispers float on winter air.
+  Words:
+    - ' Whispers' (96.40s - 96.86s, prob: 0.64)
+    - ' float' (96.86s - 97.60s, prob: 0.98)
+    - ' on' (97.60s - 98.30s, prob: 0.99)
+    - ' winter' (98.30s - 99.08s, prob: 0.99)
+    - ' air.' (99.08s - 100.06s, prob: 0.98)
+Segment 17 [100.68s - 105.70s]:  Dreams of sleds and teddy bears.
+  Words:
+    - ' Dreams' (100.68s - 101.08s, prob: 0.78)
+    - ' of' (101.08s - 101.64s, prob: 1.00)
+    - ' sleds' (101.64s - 102.24s, prob: 0.89)
+    - ' and' (102.24s - 102.64s, prob: 0.99)
+    - ' teddy' (102.64s - 103.50s, prob: 0.80)
+    - ' bears.' (103.50s - 105.70s, prob: 1.00)
+Segment 18 [130.34s - 134.86s]:  Snow flakes fall and stars will glow.
+  Words:
+    - ' Snow' (130.34s - 131.48s, prob: 0.77)
+    - ' flakes' (131.48s - 132.00s, prob: 0.07)
+    - ' fall' (132.00s - 132.58s, prob: 0.86)
+    - ' and' (132.58s - 133.14s, prob: 0.82)
+    - ' stars' (133.14s - 133.74s, prob: 0.98)
+    - ' will' (133.74s - 134.22s, prob: 0.95)
+    - ' glow.' (134.22s - 134.86s, prob: 0.99)
+Segment 19 [135.22s - 138.22s]:  In your dreams the cold wind.
+  Words:
+    - ' In' (135.22s - 135.94s, prob: 0.95)
+    - ' your' (135.94s - 136.36s, prob: 0.99)
+    - ' dreams' (136.36s - 136.94s, prob: 0.99)
+    - ' the' (136.94s - 137.52s, prob: 0.78)
+    - ' cold' (137.52s - 137.96s, prob: 0.98)
+    - ' wind.' (137.96s - 138.22s, prob: 0.11)
+Segment 20 [138.22s - 138.22s]: 
+  Words:
+Segment 21 [138.22s - 138.22s]: 
+  Words:
+Segment 22 [138.22s - 142.74s]:  Wound show wrapped in love of fire.
+  Words:
+    - ' Wound' (138.22s - 138.62s, prob: 0.06)
+    - ' show' (138.62s - 139.12s, prob: 0.85)
+    - ' wrapped' (139.12s - 140.50s, prob: 0.23)
+    - ' in' (140.50s - 141.00s, prob: 0.99)
+    - ' love' (141.00s - 141.38s, prob: 0.97)
+    - ' of' (141.38s - 141.82s, prob: 0.54)
+    - ' fire.' (141.82s - 142.74s, prob: 0.92)
+Segment 23 [143.12s - 149.12s]:  Low sleep now child so sweet and slow.
+  Words:
+    - ' Low' (143.12s - 143.40s, prob: 0.13)
+    - ' sleep' (143.40s - 144.56s, prob: 0.45)
+    - ' now' (144.56s - 145.10s, prob: 0.69)
+    - ' child' (145.10s - 145.68s, prob: 0.75)
+    - ' so' (145.68s - 146.12s, prob: 0.46)
+    - ' sweet' (146.12s - 147.00s, prob: 0.99)
+    - ' and' (147.00s - 148.48s, prob: 0.94)
+    - ' slow.' (148.48s - 149.12s, prob: 1.00)
+
+--- Full Text ---
+ Shhh. The snow is falling. Time for sleep. Snow flakes fall so slow and white. Blankets often fire light. Outside winter winds may sigh, But hear your safe and warm, my child. Tied beneath the quilt so deep, Dreams will come and softly sweep. Candles flicker stars arise, Snow flakes dance in moon with skies. Drift away the night is near. Close your eyes no need for fear. Mama's song will keep you tight Through the hush of snowy night. Bicycles on windowpains Draw soft pictures with their veins. Whispers float on winter air. Dreams of sleds and teddy bears. Snow flakes fall and stars will glow. In your dreams the cold wind. Wound show wrapped in love of fire. Low sleep now child so sweet and slow.
