@@ -39,13 +39,16 @@ def cli():
 @click.option('--album', '-b', help='Album name for the LRC metadata (overrides auto-extraction)')
 @click.option('--whisper-model', type=click.Choice(['tiny', 'base', 'small', 'medium', 'large', 'large-v1', 'large-v2', 'large-v3']),
               default='base', help='Whisper model size to use (default: base)')
+@click.option('--sentence-mode', is_flag=True, default=False, 
+              help='Generate sentence-based ASS subtitles where each line shows the full sentence with word-by-word highlighting (default: word-by-word)')
 def generate(
         audio: str,
         output: Optional[str] = None,
         title: Optional[str] = None,
         artist: Optional[str] = None,
         album: Optional[str] = None,
-        whisper_model: str = "base"
+        whisper_model: str = "base",
+        sentence_mode: bool = False
 ):
     """Generate a word-level LRC file by transcribing an audio file using Whisper."""
     
@@ -65,8 +68,12 @@ def generate(
     try:
         click.echo(f"Starting transcription of {os.path.basename(audio)} to LRC...")
         click.echo(f"Using Whisper {whisper_model} model for speech recognition.")
+        if sentence_mode:
+            click.echo("ASS subtitle mode: Sentence-based with word highlighting")
+        else:
+            click.echo("ASS subtitle mode: Word-by-word")
 
-        whisper_transcriber = WhisperLyricsSync(model_size=whisper_model)
+        whisper_transcriber = WhisperLyricsSync(model_size=whisper_model, sentence_mode=sentence_mode)
         
         # Call generate_lrc, which now returns paths for both LRC and ASS files
         lrc_path, ass_path = whisper_transcriber.generate_lrc(
@@ -81,7 +88,10 @@ def generate(
             click.echo(f"⚠️ LRC file generation failed or was skipped. Check logs for details.", err=True)
 
         if ass_path:
-            click.echo(f"✅ Word-level ASS subtitle file generation process completed. Output: {ass_path}")
+            if sentence_mode:
+                click.echo(f"✅ Sentence-based ASS subtitle file generation process completed. Output: {ass_path}")
+            else:
+                click.echo(f"✅ Word-level ASS subtitle file generation process completed. Output: {ass_path}")
         else:
             click.echo(f"⚠️ ASS subtitle file generation failed or was skipped. Check logs for details.", err=True)
             

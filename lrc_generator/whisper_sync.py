@@ -20,15 +20,17 @@ class WhisperLyricsSync:
     Class for generating word-level timed lyrics directly from audio using OpenAI's Whisper model.
     """
 
-    def __init__(self, model_size: str = "base"):
+    def __init__(self, model_size: str = "base", sentence_mode: bool = False):
         """
         Initialize the Whisper model.
 
         Args:
             model_size: Size of Whisper model to use ('tiny', 'base', 'small', 'medium', 'large')
                         Larger models are more accurate but slower and require more memory
+            sentence_mode: If True, generates sentence-based ASS subtitles with word highlighting
         """
         self.model_size = model_size
+        self.sentence_mode = sentence_mode
         self.model = None
         self._load_model()
 
@@ -235,27 +237,31 @@ class WhisperLyricsSync:
         # --- Generate ASS file ---
         ass_file_generated_path: Optional[str] = None
         try:
-            word_level_timed_data_for_ass: List[Tuple[str, float, float]] = []
+            # Prepare segment-based data for ASS generation
+            segment_data_for_ass = []
             if "segments" in transcription_result:
                 for segment in transcription_result["segments"]:
                     if "words" in segment:
+                        segment_words = []
                         for word_info in segment["words"]:
                             word = word_info.get('word', '').strip()
                             start = word_info.get('start')
                             end = word_info.get('end')
                             if word and start is not None and end is not None:
-                                word_level_timed_data_for_ass.append((word, float(start), float(end)))
+                                segment_words.append((word, float(start), float(end)))
+                        if segment_words:
+                            segment_data_for_ass.append(segment_words)
             
-            if not word_level_timed_data_for_ass:
-                print(f"⚠️ No word data extracted for ASS generation from {audio_path}.")
+            if not segment_data_for_ass:
+                print(f"⚠️ No segment data extracted for ASS generation from {audio_path}.")
             else:
-                formatter = AssFormatter() # Using default styles and video dimensions
+                formatter = AssFormatter(sentence_mode=self.sentence_mode) # Pass sentence_mode to formatter
                 
                 # Prepare title for ASS
                 ass_title = metadata.get('title') if metadata and metadata.get('title') else audio_filename_base
 
-                ass_content = formatter.create_ass_file_content(
-                    word_level_timed_data_for_ass,
+                ass_content = formatter.create_ass_file_content_from_segments(
+                    segment_data_for_ass,
                     title=ass_title,
                     audio_file_name=os.path.basename(audio_path)
                     # Video dimensions will use AssFormatter defaults
